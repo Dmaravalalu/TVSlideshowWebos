@@ -129,7 +129,7 @@ if ($existing) {
         Fail "nssm remove $ServiceName failed (exit $rc). Try: sc delete $ServiceName  (admin), then re-run."
     }
 }
->>>>>>> 7a360cab7be557ea433f935a2c4102d9c97f392c
+
 
 $NodePath = (Get-Command node).Source
 $ServerScript = Join-Path $InstallDir "src\server.js"
