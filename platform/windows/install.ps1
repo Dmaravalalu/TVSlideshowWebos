@@ -87,11 +87,11 @@ if (-not (Test-Path $Nssm)) {
 Info "NSSM at: $Nssm"
 
 # 5. Remove existing service if it exists, then re-register.
-$existing = & $Nssm status $ServiceName 2>$null
-if ($LASTEXITCODE -eq 0) {
+$existing = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
+if ($existing) {
     Info "Removing existing service $ServiceName ..."
-    & $Nssm stop $ServiceName 2>$null | Out-Null
-    & $Nssm remove $ServiceName confirm | Out-Null
+    & $Nssm stop $ServiceName 2>&1 | Out-Null
+    & $Nssm remove $ServiceName confirm 2>&1 | Out-Null
 }
 
 $NodePath = (Get-Command node).Source
