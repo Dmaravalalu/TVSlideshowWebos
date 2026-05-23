@@ -28,7 +28,7 @@
     82:  "shuffleToggle",  // R
   };
 
-  // Keys that exit the slideshow back to the setup page.
+  // Keys that exit the slideshow back to the settings page.
   // Esc (27) for desktop browsers; 10009 is WebOS Magic Remote "Exit/Back".
   var EXIT_KEYS = { 27: true, 10009: true };
 
@@ -38,7 +38,7 @@
   window.addEventListener("keydown", function (ev) {
     if (EXIT_KEYS[ev.keyCode]) {
       ev.preventDefault();
-      location.href = "/";
+      location.href = "/setup";
       return;
     }
     var action = MAP[ev.keyCode];

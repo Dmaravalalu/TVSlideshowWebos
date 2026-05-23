@@ -74,6 +74,12 @@ export function buildAdminRouter(ctx) {
     }
   });
 
+  // /setup always serves the setup page (mode picker, reindex, interval) so
+  // settings stay reachable after mediaRoot is configured.
+  router.get("/setup", (_req, res) => {
+    res.sendFile(path.join(publicDir, "index.html"));
+  });
+
   // Slideshow page is always available even pre-config (so the user can keep
   // the URL bookmarked on the TV); it will show an "awaiting setup" overlay.
   router.get("/slideshow", (_req, res) => {

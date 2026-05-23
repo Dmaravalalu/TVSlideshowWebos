@@ -86,12 +86,47 @@ if (-not (Test-Path $Nssm)) {
 }
 Info "NSSM at: $Nssm"
 
+# Helper: run nssm.exe in a *child* process with stdout/stderr fully isolated
+# from PowerShell's pipeline, so informational nssm messages (e.g.
+# "SERVICE_STOP_PENDING", "The service has not been started", "Can't open
+# service!") can't trip $ErrorActionPreference=Stop. We use exit code as the
+# source of truth.
+#
+# Note on scope: this only ever invokes the local $Nssm binary (under
+# $InstallDir\bin) against the configured $ServiceName. Other NSSM-managed
+# services on this machine are untouched.
+function Invoke-Nssm {
+    param([string[]] $NssmArgs)
+    $outFile = [System.IO.Path]::GetTempFileName()
+    $errFile = [System.IO.Path]::GetTempFileName()
+    try {
+        $p = Start-Process -FilePath $Nssm -ArgumentList $NssmArgs `
+                           -Wait -NoNewWindow -PassThru `
+                           -RedirectStandardOutput $outFile `
+                           -RedirectStandardError  $errFile
+        return $p.ExitCode
+    } finally {
+        Remove-Item $outFile -ErrorAction SilentlyContinue
+        Remove-Item $errFile -ErrorAction SilentlyContinue
+    }
+}
+
 # 5. Remove existing service if it exists, then re-register.
 $existing = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
 if ($existing) {
     Info "Removing existing service $ServiceName ..."
-    & $Nssm stop $ServiceName 2>&1 | Out-Null
-    & $Nssm remove $ServiceName confirm 2>&1 | Out-Null
+    # Stop is best-effort: it's fine if the service is already stopped or in a
+    # weird state. We only care that it's STOPPED before we issue remove.
+    Invoke-Nssm @("stop", $ServiceName) | Out-Null
+    for ($i = 0; $i -lt 30; $i++) {
+        $svc = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
+        if (-not $svc -or $svc.Status -eq "Stopped") { break }
+        Start-Sleep -Milliseconds 500
+    }
+    $rc = Invoke-Nssm @("remove", $ServiceName, "confirm")
+    if ($rc -ne 0) {
+        Fail "nssm remove $ServiceName failed (exit $rc). Try: sc delete $ServiceName  (admin), then re-run."
+    }
 }
 
 $NodePath = (Get-Command node).Source
