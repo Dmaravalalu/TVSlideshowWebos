@@ -210,8 +210,15 @@ export function attachWs(httpServer, ctx) {
       }
     });
 
-    // Initial status push as soon as the client lands.
-    safeSend(ws, { type: "status", connectedClients: state.connectedClients, mode: state.mode, imgSec: state.imgSec });
+    // Initial status push as soon as the client lands. Include paused so the
+    // client can reflect a persisted paused state instead of silently sitting.
+    safeSend(ws, {
+      type: "status",
+      connectedClients: state.connectedClients,
+      mode: state.mode,
+      imgSec: state.imgSec,
+      paused: state.paused,
+    });
   });
 
   // Heartbeat sweep.

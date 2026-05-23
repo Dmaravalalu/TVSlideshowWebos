@@ -78,3 +78,15 @@ button:disabled { opacity: 0.55; cursor: default; }
   pointer-events: none;
 }
 #overlay.hidden { display: none; }
+
+/* Subtle exit affordance, top-right. Fades in on hover/tap of the stage. */
+#exitLink {
+  position: absolute; top: 18px; right: 18px;
+  padding: 6px 12px; background: rgba(0,0,0,0.55); color: #fff;
+  text-decoration: none; font-size: 13px; border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.15);
+  opacity: 0; transition: opacity 250ms ease;
+  cursor: pointer;
+}
+.stage:hover #exitLink, .stage.show-chrome #exitLink { opacity: 0.85; }
+#exitLink:hover { opacity: 1; }

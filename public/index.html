@@ -35,6 +35,28 @@
       <div class="status" id="status">Ready.</div>
       <div class="progress" id="progressWrap" style="display:none"><div id="progressBar"></div></div>
 
+      <hr style="border:0; border-top:1px solid #222; margin:20px 0" />
+
+      <h2 style="margin:0 0 12px; font-size:16px; font-weight:600;">Playback settings</h2>
+      <div class="row" style="margin-bottom:12px">
+        <div class="field" style="margin-bottom:0">
+          <label>Mode</label>
+          <select id="mode">
+            <option value="sequential">Sequential — walk folders in order</option>
+            <option value="random">Random — weighted by folder size</option>
+          </select>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>Seconds per image</label>
+          <input id="imgSec" type="number" min="1" max="600" step="1" />
+        </div>
+      </div>
+      <div class="toolbar">
+        <button id="saveSettings" type="button">Save playback settings</button>
+        <a href="/slideshow" style="padding:10px 14px; color:#9aa0a6; text-decoration:none; font-size:14px;">Open slideshow &rarr;</a>
+      </div>
+      <div class="status" id="settingsStatus"></div>
+
       <div class="status" style="margin-top:18px">
         Once you pick a folder, indexing starts in the background. When it
         finishes, point the TV browser to <strong id="tvUrl">http://&lt;NUC-IP&gt;:8080/slideshow</strong>.

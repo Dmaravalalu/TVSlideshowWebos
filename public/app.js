@@ -43,6 +43,16 @@
   }
   setInterval(tickClock, 1000); tickClock();
 
+  // Reveal the Exit link briefly on tap/click (TV browsers won't fire :hover).
+  var chromeTimer = null;
+  function revealChrome() {
+    stage.classList.add("show-chrome");
+    if (chromeTimer) clearTimeout(chromeTimer);
+    chromeTimer = setTimeout(function () { stage.classList.remove("show-chrome"); }, 3000);
+  }
+  stage.addEventListener("click", revealChrome);
+  stage.addEventListener("touchstart", revealChrome);
+
   function showToast(msg) {
     toastEl.textContent = msg;
     toastEl.classList.add("show");
@@ -109,14 +119,15 @@
     if (!item) return;
     clearImgTimer();
     overlay.classList.add("hidden");
-    folderEl.textContent = item.rel;
     var inactiveIdx = 1 - active;
     var nextLayer = layers[inactiveIdx];
     nextLayer.innerHTML = "";
     var el = buildMedia(item);
     nextLayer.appendChild(el);
     readyEvent(el).then(function () {
-      // Crossfade.
+      // Update folder label in lockstep with the crossfade so the label
+      // doesn't change ahead of the picture.
+      folderEl.textContent = item.rel;
       nextLayer.classList.add("visible");
       layers[active].classList.remove("visible");
       // Wait for fade to complete before clearing the previous layer.
@@ -179,6 +190,12 @@
             overlay.textContent = msg.root
               ? "Indexing your media ..."
               : "Open the setup page on a phone or laptop:\nhttp://" + location.host + "/";
+          }
+          // Sync client paused state from server so we don't silently sit on a
+          // persisted paused state with no indication.
+          if (typeof msg.paused === "boolean") {
+            pausedLocal = msg.paused;
+            if (pausedLocal) showToast("Paused");
           }
           break;
         case "error":

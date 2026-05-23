@@ -143,4 +143,30 @@
       }
     }).catch(function () { setTimeout(pollStatus, 1500); });
   }
+
+  // Playback settings: load current values, save on click.
+  var modeSel = document.getElementById("mode");
+  var imgSecInput = document.getElementById("imgSec");
+  var saveBtn = document.getElementById("saveSettings");
+  var settingsStatus = document.getElementById("settingsStatus");
+
+  getJSON("/api/status").then(function (s) {
+    if (s.mode) modeSel.value = s.mode;
+    if (typeof s.imgSec === "number") imgSecInput.value = s.imgSec;
+  }).catch(function () { /* settings will stay blank; not fatal */ });
+
+  saveBtn.addEventListener("click", function () {
+    var body = { mode: modeSel.value, imgSec: Number(imgSecInput.value) };
+    if (!Number.isFinite(body.imgSec) || body.imgSec < 1 || body.imgSec > 600) {
+      settingsStatus.textContent = "Seconds per image must be between 1 and 600.";
+      return;
+    }
+    saveBtn.disabled = true;
+    settingsStatus.textContent = "Saving ...";
+    postJSON("/api/config", body).then(function (r) {
+      settingsStatus.textContent = "Saved. Mode: " + r.mode + ", " + r.imgSec + "s per image.";
+    }).catch(function (err) {
+      settingsStatus.textContent = "Save failed: " + err.message;
+    }).finally(function () { saveBtn.disabled = false; });
+  });
 })();
