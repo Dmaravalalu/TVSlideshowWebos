@@ -1,0 +1,80 @@
+/*
+ * Slideshow styles.
+ *
+ * Two design surfaces:
+ *
+ *   1. Setup page (index.html) — a centered card on a dark background.
+ *   2. Slideshow page (slideshow.html) — TV-fullscreen. Black, no chrome,
+ *      crossfade between two stacked media layers, overlay text bottom-left
+ *      (folder) and bottom-right (clock).
+ *
+ * Targeted at Chromium 87 (WebOS), so no :has(), no @container queries.
+ */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; background: #000; color: #eaeaea; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; }
+
+/* ----- Setup page ----- */
+.setup-wrap { min-height: 100%; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.card { width: 100%; max-width: 720px; background: #111; border: 1px solid #222; border-radius: 12px; padding: 24px; box-shadow: 0 8px 30px rgba(0,0,0,0.4); }
+.card h1 { margin: 0 0 4px; font-size: 22px; font-weight: 600; }
+.card p { margin: 0 0 16px; color: #9aa0a6; font-size: 14px; }
+.field { margin-bottom: 16px; }
+.field label { display: block; font-size: 13px; color: #9aa0a6; margin-bottom: 6px; }
+.row { display: flex; gap: 8px; align-items: center; }
+.row > * { flex: 1; }
+select, input[type=text], input[type=number] {
+  width: 100%; padding: 10px 12px; background: #0a0a0a; border: 1px solid #2a2a2a; color: #eaeaea; border-radius: 8px; font-size: 14px;
+}
+button {
+  padding: 10px 14px; background: #2563eb; color: #fff; border: 0; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500;
+}
+button.secondary { background: #1f2937; }
+button:disabled { opacity: 0.55; cursor: default; }
+.crumbs { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: #9aa0a6; word-break: break-all; }
+.dirs { max-height: 260px; overflow: auto; background: #0a0a0a; border: 1px solid #2a2a2a; border-radius: 8px; }
+.dirs button.dir { display: block; width: 100%; text-align: left; padding: 8px 12px; background: transparent; border: 0; border-bottom: 1px solid #1a1a1a; color: #eaeaea; font-size: 13px; cursor: pointer; }
+.dirs button.dir:hover { background: #131313; }
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
+.status { font-size: 13px; color: #9aa0a6; margin-top: 12px; }
+.progress { height: 6px; background: #1a1a1a; border-radius: 3px; overflow: hidden; margin-top: 8px; }
+.progress > div { height: 100%; background: #2563eb; width: 0%; transition: width 0.3s; }
+
+/* ----- Slideshow page ----- */
+.stage { position: fixed; inset: 0; background: #000; overflow: hidden; cursor: none; }
+.layer {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 200ms ease;
+}
+.layer.visible { opacity: 1; }
+.layer img, .layer video {
+  max-width: 100%; max-height: 100%; width: auto; height: auto;
+  object-fit: contain;
+}
+
+#folder, #clock {
+  position: absolute; bottom: 24px; color: rgba(255,255,255,0.85);
+  font-family: ui-monospace, Menlo, monospace; font-size: 22px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+  pointer-events: none;
+}
+#folder { left: 28px; }
+#clock  { right: 28px; }
+
+#toast {
+  position: absolute; top: 24px; left: 50%; transform: translateX(-50%);
+  padding: 10px 16px; background: rgba(0,0,0,0.6); color: #fff;
+  border-radius: 999px; font-size: 18px;
+  opacity: 0; transition: opacity 200ms ease;
+  pointer-events: none;
+}
+#toast.show { opacity: 1; }
+
+#overlay {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.75); font-size: 20px; text-align: center; padding: 32px;
+  pointer-events: none;
+}
+#overlay.hidden { display: none; }

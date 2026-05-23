@@ -1,0 +1,27 @@
+# Auto-normalize text files to LF in the repo, OS-appropriate on checkout.
+* text=auto eol=lf
+
+# Windows scripts must keep CRLF or NSSM and cmd.exe misbehave.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Shell + systemd unit templates must stay LF.
+*.sh   text eol=lf
+*.tmpl text eol=lf
+
+# Binary blobs (none expected; left here as a hint).
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.heic binary
+*.heif binary
+*.bmp binary
+*.mp4 binary
+*.mov binary
+*.m4v binary
+*.mkv binary
+*.webm binary
+*.avi binary

@@ -1,0 +1,21 @@
+[Unit]
+Description=Home Slideshow Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=__USER__
+WorkingDirectory=/opt/slideshow
+Environment=NODE_ENV=production
+Environment=PORT=__PORT__
+ExecStart=/usr/bin/node /opt/slideshow/src/server.js
+Restart=on-failure
+RestartSec=3
+KillSignal=SIGTERM
+TimeoutStopSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

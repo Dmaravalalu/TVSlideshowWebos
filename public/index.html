@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Slideshow setup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="setup-wrap">
+    <div class="card">
+      <h1>Pick your media folder</h1>
+      <p>Browse to the folder that contains your <code>YYYY/MM/&lt;files&gt;</code> tree (typically your external HDD's photo root).</p>
+
+      <div class="field" id="driveField">
+        <label>Drive</label>
+        <select id="drive"></select>
+      </div>
+
+      <div class="field">
+        <label>Current location</label>
+        <div class="crumbs" id="crumbs">/</div>
+      </div>
+
+      <div class="field">
+        <label>Subfolders</label>
+        <div class="dirs" id="dirs"></div>
+      </div>
+
+      <div class="toolbar">
+        <button class="secondary" id="up" type="button">Up one level</button>
+        <button id="pick" type="button">Use this folder as the media root</button>
+      </div>
+
+      <div class="status" id="status">Ready.</div>
+      <div class="progress" id="progressWrap" style="display:none"><div id="progressBar"></div></div>
+
+      <div class="status" style="margin-top:18px">
+        Once you pick a folder, indexing starts in the background. When it
+        finishes, point the TV browser to <strong id="tvUrl">http://&lt;NUC-IP&gt;:8080/slideshow</strong>.
+      </div>
+    </div>
+  </div>
+
+  <script src="/setup.js"></script>
+</body>
+</html>
