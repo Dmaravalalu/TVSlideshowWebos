@@ -87,12 +87,23 @@ if (-not (Test-Path $Nssm)) {
 Info "NSSM at: $Nssm"
 
 # 5. Remove existing service if it exists, then re-register.
-$existing = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
-if ($existing) {
-    Info "Removing existing service $ServiceName ..."
-    & $Nssm stop $ServiceName 2>&1 | Out-Null
-    & $Nssm remove $ServiceName confirm 2>&1 | Out-Null
-}
+$existing = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue                                                          
+  if ($existing) {                                                                                                                    
+      Info "Removing existing service $ServiceName ..."                                                                               
+      $prev = $ErrorActionPreference
+      $ErrorActionPreference = "Continue"                                                                                             
+      try {                                                                                                                         
+          & $Nssm stop $ServiceName 2>&1 | Out-Null
+          for ($i = 0; $i -lt 30; $i++) {                                                                                             
+              $svc = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
+              if (-not $svc -or $svc.Status -eq "Stopped") { break }                                                                  
+              Start-Sleep -Milliseconds 500                                                                                         
+          }                                                                                                                           
+          & $Nssm remove $ServiceName confirm 2>&1 | Out-Null                                                                         
+      } finally {
+          $ErrorActionPreference = $prev                                                                                              
+      }                                                                                                                             
+  }
 
 $NodePath = (Get-Command node).Source
 $ServerScript = Join-Path $InstallDir "src\server.js"
